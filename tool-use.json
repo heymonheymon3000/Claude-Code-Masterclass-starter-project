@@ -1,0 +1,45 @@
+{
+  "session_id": "5541e6cf-c406-4230-a466-a5f44d6f6513",
+  "transcript_path": "/Users/tbparrish/.claude/projects/-Users-tbparrish-projects-ai-Claude-Code-Masterclass-starter-project/5541e6cf-c406-4230-a466-a5f44d6f6513.jsonl",
+  "cwd": "/Users/tbparrish/projects/ai/Claude-Code-Masterclass-starter-project",
+  "permission_mode": "default",
+  "effort": {
+    "level": "high"
+  },
+  "hook_event_name": "PostToolUse",
+  "tool_name": "Edit",
+  "tool_input": {
+    "file_path": "/Users/tbparrish/projects/ai/Claude-Code-Masterclass-starter-project/app/(public)/page.tsx",
+    "old_string": "<div>Clock in. Cause chaos.</div>",
+    "new_string": "<div>Deniability sold separately.</div>",
+    "replace_all": false
+  },
+  "tool_response": {
+    "filePath": "/Users/tbparrish/projects/ai/Claude-Code-Masterclass-starter-project/app/(public)/page.tsx",
+    "oldString": "<div>Clock in. Cause chaos.</div>",
+    "newString": "<div>Deniability sold separately.</div>",
+    "originalFile": "// this page should be used only as a splash page to decide where a user should be navigated to\n// when logged in --> to /heists\n// when not logged in --> to /login\n\nimport { Clock8 } from \"lucide-react\"\n\nexport default function Home() {\n  return (\n<div className=\"center-content\">\n<div className=\"page-content\">\n<h1>\nP<Clock8 className=\"logo\" strokeWidth={2.75} />cket Heist\n</h1>\n<div>Clock in. Cause chaos.</div>\n</div>\n</div>\n  )\n}\n",
+    "structuredPatch": [
+      {
+        "oldStart": 11,
+        "oldLines": 7,
+        "newStart": 11,
+        "newLines": 7,
+        "lines": [
+          " <h1>",
+          " P<Clock8 className=\"logo\" strokeWidth={2.75} />cket Heist",
+          " </h1>",
+          "-<div>Clock in. Cause chaos.</div>",
+          "+<div>Deniability sold separately.</div>",
+          " </div>",
+          " </div>",
+          "   )"
+        ]
+      }
+    ],
+    "userModified": false,
+    "replaceAll": false
+  },
+  "tool_use_id": "toolu_01TpEkHmHfFaCay3AXuK2Tmj",
+  "duration_ms": 35
+}
