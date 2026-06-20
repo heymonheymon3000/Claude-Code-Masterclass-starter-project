@@ -1,7 +1,26 @@
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, it, expect, vi, afterEach } from "vitest";
+import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
+import { setDoc } from "firebase/firestore";
 import AuthForm from "@/components/AuthForm";
+
+vi.mock("@/lib/firebase/auth", () => ({ auth: {} }));
+vi.mock("@/lib/firebase/firestore", () => ({ db: {} }));
+vi.mock("firebase/auth", () => ({
+  createUserWithEmailAndPassword: vi.fn(() =>
+    Promise.resolve({ user: { uid: "test-uid" } }),
+  ),
+  updateProfile: vi.fn(() => Promise.resolve()),
+}));
+vi.mock("firebase/firestore", () => ({
+  doc: vi.fn(),
+  setDoc: vi.fn(() => Promise.resolve()),
+}));
+vi.mock("next/navigation", () => ({ useRouter: () => ({ push: vi.fn() }) }));
+vi.mock("@/lib/generateCodename", () => ({
+  generateCodename: () => "SwiftCrimsonFox",
+}));
 
 afterEach(() => {
   vi.restoreAllMocks();
@@ -52,21 +71,6 @@ describe("AuthForm", () => {
     expect(logSpy).toHaveBeenCalledWith({
       email: "heister@example.com",
       password: "s3cret",
-    });
-  });
-
-  it("logs the entered credentials when the signup form is submitted", async () => {
-    const user = userEvent.setup();
-    const logSpy = vi.spyOn(console, "log").mockImplementation(() => {});
-    render(<AuthForm mode="signup" />);
-
-    await user.type(screen.getByLabelText("Email"), "newbie@example.com");
-    await user.type(screen.getByLabelText("Password"), "hunter2");
-    await user.click(screen.getByRole("button", { name: /sign up/i }));
-
-    expect(logSpy).toHaveBeenCalledWith({
-      email: "newbie@example.com",
-      password: "hunter2",
     });
   });
 

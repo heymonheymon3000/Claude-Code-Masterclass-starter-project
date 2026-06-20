@@ -2,6 +2,12 @@
 
 import { useState, type FormEvent } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
+import { doc, setDoc } from "firebase/firestore";
+import { auth } from "@/lib/firebase/auth";
+import { db } from "@/lib/firebase/firestore";
+import { generateCodename } from "@/lib/generateCodename";
 import styles from "./AuthForm.module.css";
 
 type AuthMode = "login" | "signup";
@@ -27,16 +33,48 @@ const copy = {
   },
 } as const;
 
+const firebaseErrorMessages: Record<string, string> = {
+  "auth/email-already-in-use": "An account with this email already exists.",
+  "auth/weak-password": "Password must be at least 6 characters.",
+  "auth/invalid-email": "Please enter a valid email address.",
+};
+
 export default function AuthForm({ mode }: AuthFormProps) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const router = useRouter();
 
   const text = copy[mode];
 
-  function handleSubmit(e: FormEvent<HTMLFormElement>) {
+  async function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    console.log({ email, password });
+    if (mode === "signup") {
+      setError(null);
+      try {
+        const result = await createUserWithEmailAndPassword(
+          auth,
+          email,
+          password,
+        );
+        const codename = generateCodename();
+        await updateProfile(result.user, { displayName: codename });
+        await setDoc(doc(db, "users", result.user.uid), {
+          codename,
+          id: result.user.uid,
+        });
+        router.push("/heists");
+      } catch (err) {
+        const code = (err as { code?: string }).code ?? "";
+        setError(
+          firebaseErrorMessages[code] ??
+            "Something went wrong. Please try again.",
+        );
+      }
+    } else {
+      console.log({ email, password });
+    }
   }
 
   return (
@@ -85,6 +123,12 @@ export default function AuthForm({ mode }: AuthFormProps) {
           <button type="submit" className="btn">
             {text.submit}
           </button>
+
+          {error && (
+            <p role="alert" className="text-red-500 text-sm text-center">
+              {error}
+            </p>
+          )}
         </form>
 
         <p className={styles.switch}>
